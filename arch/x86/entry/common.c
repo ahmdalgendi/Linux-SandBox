@@ -283,7 +283,8 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
 __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
 {
 	struct thread_info *ti;
-
+	if(nr == 1)
+	printk("hello from kernel before: %lu\n" , nr);
 	enter_from_user_mode();
 	local_irq_enable();
 	ti = current_thread_info();
@@ -295,7 +296,6 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
 	 * table.  The only functional difference is the x32 bit in
 	 * regs->orig_ax, which changes the behavior of some syscalls.
 	 */
-	// printk("hello from kernel before: %lu\n" , nr);
 	nr &= __SYSCALL_MASK;
 	// printk("hello from kernel after: %lu\n" , nr);
 	if (likely(nr < NR_syscalls)) {
