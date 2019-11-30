@@ -355,7 +355,9 @@
 431	common	fsconfig		__x64_sys_fsconfig
 432	common	fsmount			__x64_sys_fsmount
 433	common	fspick			__x64_sys_fspick
-
+434	common	sbx421_block	__x64_sys_sbx421_block
+435	common	sbx421_unblock	__x64_sys_sbx421_unblock
+436	common	sbx421_count	__x64_sys_sbx421_count
 #
 # x32-specific system call numbers start at 512 to avoid cache impact
 # for native 64-bit operation. The __x32_compat_sys stubs are created

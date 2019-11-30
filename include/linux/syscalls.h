@@ -1397,4 +1397,7 @@ static inline unsigned int ksys_personality(unsigned int personality)
 	return old;
 }
 
+asmlinkage long sbx421_block(pid_t proc, unsigned long nr) ;
+asmlinkage long sbx421_unblock(pid_t proc, unsigned long nr) ;
+asmlinkage long sbx421_count(pid_t proc, unsigned long nr) ;
 #endif
