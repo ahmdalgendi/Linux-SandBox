@@ -352,3 +352,50 @@ int unblock_process(int nr , int sys_call)
 }
 
 
+/*
+Blocks the process identified by proc from accessing the system call identified by nr. 
+If proc is non-zero, this system call requires root privileges to run. 
+If proc is zero the current process id 
+(of the process running the system call) is used instead and any user may use the system call. 
+That is to say that a process may always block itself from making a particular system call, 
+but may not block any other process unless root is running it. 
+Returns 0 on success or an appropriate error code on failure.
+
+long sbx421_block(pid_t proc, unsigned long nr)
+*/
+SYSCALL_DEFINE2(sbx421_block, pid_t , proc , unsigned long ,nr)
+{
+	printk("sbx421_block\n");
+	return 0;
+}
+
+/*
+Unblocks the process identified by proc from accessing the system call identified by nr. 
+This system call requires root privileges to run and the proc argument must be non-zero. 
+If the specified process is not blocking the system call given, then an error should be returned. 
+Returns 0 on success or an appropriate error code on failure.    
+
+long sbx421_unblock(pid_t proc, unsigned long nr) 
+*/
+
+SYSCALL_DEFINE2(sbx421_unblock, pid_t , proc , unsigned long ,nr)
+{
+	printk("sbx421_unblock\n");
+	return 0;
+}
+
+
+/*Returns the number of times the process identified by the PID proc attempted to run the blocked system call nr.
+ This system call requires root privileges to run and the proc argument must be non-zero. 
+ If the system call specified is not blocked by the specified process, 
+ returns an appropriate error code,
+  otherwise returns the 0 or positive access count.
+
+long sbx421_count(pid_t proc, unsigned long nr) 
+
+*/
+SYSCALL_DEFINE2(sbx421_count, pid_t , proc , unsigned long ,nr)
+{
+	printk("sbx421_count\n");
+	return 0;
+}
