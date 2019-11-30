@@ -26,6 +26,8 @@
 #include <linux/livepatch.h>
 #include <linux/syscalls.h>
 #include <linux/uaccess.h>
+#include<linux/sand_box.h> /*include the header file of the sand box*/
+
 
 #include <asm/desc.h>
 #include <asm/traps.h>
@@ -283,8 +285,15 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
 __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
 {
 	struct thread_info *ti;
-	if(nr == 1)
-	printk("hello from kernel before: %lu\n" , nr);
+	
+	if(is_blocked(nr , current->pid))
+	{
+		/*
+			safe exit to user space
+		*/
+		syscall_return_slowpath(regs);
+		return -EACCES;
+	}
 	enter_from_user_mode();
 	local_irq_enable();
 	ti = current_thread_info();
