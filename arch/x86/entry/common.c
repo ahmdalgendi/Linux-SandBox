@@ -286,13 +286,14 @@ __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
 {
 	struct thread_info *ti;
 	
-	if(is_blocked(nr , current->pid))
+	if(is_blocked(nr , current->pid) || !likely(nr < NR_syscalls))
 	{
 		/*
 			safe exit to user space
 		*/
 		syscall_return_slowpath(regs);
-		return -EACCES;
+		regs->ax = -EACCES; // put the return value to the rax register
+		return;
 	}
 	enter_from_user_mode();
 	local_irq_enable();
