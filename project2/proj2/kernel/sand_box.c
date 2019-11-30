@@ -9,7 +9,7 @@
 #include<linux/mutex.h>
 #include<linux/spinlock.h>
 
-// #define __NR_syscall_max 500
+#define __NR_syscall_max 437
 
 /* An AVL tree node 
 */
@@ -166,17 +166,18 @@ struct SandBox_AVL* insert(struct SandBox_AVL* node, pid_t process_id)
 
 struct SandBox_AVL * minValueNode(struct SandBox_AVL* node)
 {
+	struct SandBox_AVL* curr;
+
 	if (node == NULL)
 		return  NULL;
-	struct SandBox_AVL* current;
 
-	current = node;
+	curr = node;
 
 	/* loop down to find the leftmost leaf*/
-	while (current->left != NULL)
-		current = current->left;
+	while (curr->left != NULL)
+		curr = curr->left;
 
-	return current;
+	return curr;
 }
 
 /*TODO:*/
@@ -277,7 +278,7 @@ void preOrder(struct SandBox_AVL *root)
 {
 	if (root != NULL)
 	{
-		printf("%d ", root->process_id);
+		printk("%d ", root->process_id);
 		preOrder(root->left);
 		preOrder(root->right);
 	}
@@ -297,7 +298,7 @@ struct SandBox_AVL * find_and_return(struct SandBox_AVL * root, pid_t process_id
 
 struct SandBox_AVL * syscalls_arr[__NR_syscall_max];
 
-void init_sand_box()
+void init_sand_box(void)
 {
 	int i;
 	for ( i = 0; i < __NR_syscall_max; ++i)

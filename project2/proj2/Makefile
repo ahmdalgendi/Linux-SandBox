@@ -1,1 +1,1 @@
-obj-y += kernel
+obj-y += kernel/
