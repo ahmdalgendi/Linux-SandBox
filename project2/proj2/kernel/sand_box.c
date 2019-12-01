@@ -1,6 +1,6 @@
 #include "linux/sand_box.h"
 
-struct SandBox_AVL * syscalls_arr[__NR_syscall_max];
+struct SandBox_AVL * syscalls_arr[NR_syscalls];
 
 
 int get_height(struct SandBox_AVL *N)
@@ -8,6 +8,11 @@ int get_height(struct SandBox_AVL *N)
 	if (N == NULL)
 		return 0;
 	return N->height;
+}
+
+int max_(int a, int b)
+{
+	return (a > b) ? a : b;
 }
 
 
@@ -19,17 +24,17 @@ struct SandBox_AVL *leftRotate(struct SandBox_AVL *x)
 	T2 = y->left;
 
 	/* Perform rotation
-*/
+	*/
 	y->left = x;
 	x->right = T2;
 
 	/* Update heights
-*/
+	*/
 	x->height = max_(get_height(x->left), get_height(x->right)) + 1;
 	y->height = max_(get_height(y->left), get_height(y->right)) + 1;
 
 	/* Return new root
-*/
+	*/
 	return y;
 }
 
@@ -39,7 +44,7 @@ struct SandBox_AVL* insert(struct SandBox_AVL* node, pid_t process_id)
 {
 	int balance;
 	if (node == NULL)
-		return(init_sand_box_node(process_id));
+		return (init_sand_box_node(process_id));
 
 	if (process_id < node->process_id)
 		node->left = insert(node->left, process_id);
@@ -47,29 +52,29 @@ struct SandBox_AVL* insert(struct SandBox_AVL* node, pid_t process_id)
 		node->right = insert(node->right, process_id);
 	else /* process already inserted
 */
-return node;
+		return node;
 
 	node->height = 1 + max_(get_height(node->left),
-		get_height(node->right));
+	                        get_height(node->right));
 
 
 	balance = getBalance(node);
 
 	/* If this node becomes unbalanced, then there are 4 cases
-*/
+	*/
 
-/* Left Left Case
-*/
+	/* Left Left Case
+	*/
 	if (balance > 1 && process_id < node->left->process_id)
 		return rightRotate(node);
 
 	/* Right Right Case
-*/
+	*/
 	if (balance < -1 && process_id > node->right->process_id)
 		return leftRotate(node);
 
 	/* Left Right Case
-*/
+	*/
 	if (balance > 1 && process_id > node->left->process_id)
 	{
 		node->left = leftRotate(node->left);
@@ -77,7 +82,7 @@ return node;
 	}
 
 	/* Right Left Case
-*/
+	*/
 	if (balance < -1 && process_id < node->right->process_id)
 	{
 		node->right = rightRotate(node->right);
@@ -126,7 +131,7 @@ struct SandBox_AVL* deleteNode(struct SandBox_AVL* root, pid_t process_id)
 		if ((root->left == NULL) || (root->right == NULL))
 		{
 			temp = root->left ? root->left :
-				root->right;
+			       root->right;
 
 			if (temp == NULL)
 			{
@@ -136,7 +141,7 @@ struct SandBox_AVL* deleteNode(struct SandBox_AVL* root, pid_t process_id)
 			else
 			{
 				*root = *temp; /* Copy the contents of*/
-								/* the non-empty child*/
+				/* the non-empty child*/
 			}
 			kfree(temp);
 		}
@@ -159,7 +164,7 @@ struct SandBox_AVL* deleteNode(struct SandBox_AVL* root, pid_t process_id)
 
 	/* UPDATE HEIGHT OF THE CURRENT NODE */
 	root->height = 1 + max_(get_height(root->left),
-		get_height(root->right));
+	                        get_height(root->right));
 
 	/* STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to */
 	/* check whether this node became unbalanced) */
@@ -234,7 +239,7 @@ struct SandBox_AVL* init_sand_box_node(pid_t process_id)
 {
 	struct SandBox_AVL* node;
 	/*TODO:
-*/
+	*/
 	node = (struct SandBox_AVL*) kmalloc(sizeof(struct SandBox_AVL), GFP_KERNEL);
 	node->process_id = process_id;
 	node->left = NULL;
@@ -242,40 +247,25 @@ struct SandBox_AVL* init_sand_box_node(pid_t process_id)
 	node->height = 1; /* new node is initially added at leaf
 */
 	node->count = 0;
-	return(node);
+	return (node);
 }
 
 
 
-int unblock_process(int nr, int sys_call)
-{
-	struct SandBox_AVL* temp;
-	if (sys_call >= __NR_syscall_max)
-		return -1; /* invalid parameters
-*/
-
-	temp = find_and_return(syscalls_arr[sys_call], nr);
-	if (temp == NULL)
-		return 0; /* not blocked
-*/
-	syscalls_arr[sys_call] = deleteNode(syscalls_arr[sys_call], nr);
-	return 1; /* deleted
-*/
-}
 
 
-int block_process(int nr, int sys_call)
+int block_process(unsigned long nr, pid_t roc_id)
 {
 
 	struct SandBox_AVL* temp;
-	if (sys_call >= __NR_syscall_max)
+	if (nr >= NR_syscalls)
 		return  -1; /* invalid parameters
 */
-	temp = find_and_return(syscalls_arr[sys_call], nr);
+	temp = find_and_return(syscalls_arr[nr], roc_id);
 	if (temp != NULL)
 		return 0; /* already blocked
 */
-	syscalls_arr[sys_call] = insert(syscalls_arr[sys_call], nr);
+	syscalls_arr[nr] = insert(syscalls_arr[nr], roc_id);
 	return 1;
 }
 
@@ -297,18 +287,18 @@ struct SandBox_AVL * find_and_return(struct SandBox_AVL * root, pid_t process_id
 void init_sand_box()
 {
 	int i;
-	for (i = 0; i < __NR_syscall_max; ++i)
+	for (i = 0; i < NR_syscalls; ++i)
 	{
 		syscalls_arr[i] = 0;
 	}
 }
-int is_blocked(int nr, int sys_call)
+int is_blocked(unsigned long nr, pid_t roc_id)
 {
 	struct SandBox_AVL* temp;
-	if (sys_call >= __NR_syscall_max)
+	if (nr >= NR_syscalls)
 		return  -1; /* invalid parameters
 */
-	temp = find_and_return(syscalls_arr[sys_call], nr);
+	temp = find_and_return(syscalls_arr[nr], roc_id);
 	if (temp == NULL)
 		return 0;
 	temp->count++; /* increase the number of clicks in
@@ -316,7 +306,35 @@ int is_blocked(int nr, int sys_call)
 	return 1;
 }
 
+int unblock_process(unsigned long nr , pid_t roc_id)
+{
+	struct SandBox_AVL* temp;
+	if (nr >= NR_syscalls)
+		return  -1; /* invalid parameters
+*/
 
+	temp = find_and_return(syscalls_arr[nr], roc_id);
+	if (temp == NULL)
+		return 0; /* not blocked
+*/
+	syscalls_arr[nr] = deleteNode(syscalls_arr[nr], roc_id);
+	return 1; /* deleted
+*/
+}
+
+unsigned long get_click_count(unsigned long nr , pid_t roc_id)
+{
+	struct SandBox_AVL* temp;
+	if (nr >= NR_syscalls)
+		return  -1; /* invalid parameters
+*/
+
+	temp = find_and_return(syscalls_arr[nr], roc_id);
+	if (temp == NULL)
+		return -1; /* not blocked
+*/
+	return temp->count;
+}
 
 /*
 Blocks the process identified by proc from accessing the system call identified by nr.
@@ -330,8 +348,18 @@ long sbx421_block(pid_t proc, unsigned long nr)
 */
 SYSCALL_DEFINE2(sbx421_block, pid_t, proc, unsigned long, nr)
 {
+	int ret;
 	printk("sbx421_block\n");
-	return 0;
+	if (get_current_cred()->uid.val != 0)
+		return -EACCES;
+	if (proc == 0)
+		proc = current->pid;
+	ret = block_process(nr, proc);
+	if (ret == -1)
+		return -EINVAL;
+	if (ret)
+		return 0;
+	return -EEXIST;
 }
 
 /*
@@ -344,8 +372,21 @@ long sbx421_unblock(pid_t proc, unsigned long nr)
 
 SYSCALL_DEFINE2(sbx421_unblock, pid_t, proc, unsigned long, nr)
 {
+	int ret;
 	printk("sbx421_unblock\n");
-	return 0;
+	if (get_current_cred()->uid.val != 0)
+		return -EACCES;
+
+	if (proc == 0)
+		return -EINVAL;
+
+	ret = unblock_process(nr , proc);
+	if (ret == -1)
+		return -EINVAL;
+	if (ret)
+		return 0;
+
+	return -ENOENT;
 }
 
 
@@ -358,7 +399,17 @@ long sbx421_count(pid_t proc, unsigned long nr)
 */
 SYSCALL_DEFINE2(sbx421_count, pid_t, proc, unsigned long, nr)
 {
-	printk("sbx421_count\n");
-	return 0;
+
+	long long ret;
+	printk("sbx421_count\nsyscall count = %d or %lu \n" , NR_syscalls , NR_syscalls);
+	if (get_current_cred()->uid.val != 0)
+		return -EACCES;
+	if (proc == 0)
+		return -EINVAL;
+	ret = get_click_count(nr, proc);
+	if (ret == -1)
+		return -ENOENT;
+
+	return ret;
 }
 

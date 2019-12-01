@@ -8,8 +8,14 @@
 #include <linux/cred.h>
 #include<linux/mutex.h>
 #include<linux/spinlock.h>
+#include "linux/audit.h"
+#ifndef _SBX_421_
+#define _SBX_421_
 
-#define __NR_syscall_max 437
+
+
+// #define NR_syscalls 437
+// #define NR_syscalls NR_syscalls
 
 /* An AVL tree node
 */
@@ -30,11 +36,6 @@ int get_height(struct SandBox_AVL *N);
 
 /*  get maximum of two integers
 */
-int max_(int a, int b)
-{
-	return (a > b) ? a : b;
-}
-
 
 
 struct SandBox_AVL* init_sand_box_node(pid_t process_id);
@@ -71,10 +72,13 @@ struct SandBox_AVL * find_and_return(struct SandBox_AVL * root, pid_t process_id
 
 void init_sand_box(void);
 
-int is_blocked(int nr, int sys_call);
+int is_blocked(unsigned long nr, pid_t roc_id);
 
-int block_process(int nr, int sys_call);
+int block_process(unsigned long nr, pid_t roc_id);
 
-int unblock_process(int nr, int sys_call);
+int unblock_process(unsigned long nr, pid_t roc_id);
 
-extern struct SandBox_AVL * syscalls_arr[__NR_syscall_max];
+// extern struct SandBox_AVL * syscalls_arr[NR_syscalls];
+
+
+#endif
