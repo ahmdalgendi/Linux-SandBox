@@ -349,7 +349,6 @@ long sbx421_block(pid_t proc, unsigned long nr)
 SYSCALL_DEFINE2(sbx421_block, pid_t, proc, unsigned long, nr)
 {
 	int ret;
-	printk("sbx421_block\n");
 	if (get_current_cred()->uid.val != 0)
 		return -EACCES;
 	f (proc < 0)
@@ -375,7 +374,6 @@ long sbx421_unblock(pid_t proc, unsigned long nr)
 SYSCALL_DEFINE2(c, pid_t, proc, unsigned long, nr)
 {
 	int ret;
-	printk("sbx421_unblock\n");
 	if (get_current_cred()->uid.val != 0)
 		return -EACCES;
 
