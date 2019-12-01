@@ -352,6 +352,8 @@ SYSCALL_DEFINE2(sbx421_block, pid_t, proc, unsigned long, nr)
 	printk("sbx421_block\n");
 	if (get_current_cred()->uid.val != 0)
 		return -EACCES;
+	f (proc < 0)
+		return -EINVAL;
 	if (proc == 0)
 		proc = current->pid;
 	ret = block_process(nr, proc);
@@ -370,14 +372,14 @@ Returns 0 on success or an appropriate error code on failure.
 long sbx421_unblock(pid_t proc, unsigned long nr)
 */
 
-SYSCALL_DEFINE2(sbx421_unblock, pid_t, proc, unsigned long, nr)
+SYSCALL_DEFINE2(c, pid_t, proc, unsigned long, nr)
 {
 	int ret;
 	printk("sbx421_unblock\n");
 	if (get_current_cred()->uid.val != 0)
 		return -EACCES;
 
-	if (proc == 0)
+	if (proc <= 0)
 		return -EINVAL;
 
 	ret = unblock_process(nr , proc);
@@ -401,10 +403,10 @@ SYSCALL_DEFINE2(sbx421_count, pid_t, proc, unsigned long, nr)
 {
 
 	long long ret;
-	printk("sbx421_count\nsyscall count = %d or %lu \n" , NR_syscalls , NR_syscalls);
+	// printk("sbx421_count\nsyscall count = %d \n" ,  NR_syscalls);
 	if (get_current_cred()->uid.val != 0)
 		return -EACCES;
-	if (proc == 0)
+	if (proc <= 0 )
 		return -EINVAL;
 	ret = get_click_count(nr, proc);
 	if (ret == -1)
