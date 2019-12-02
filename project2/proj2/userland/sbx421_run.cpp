@@ -54,16 +54,10 @@ vector<int> get_syscalls_from_file(string filename)
 		puts("syscall file not found");
 		exit(1);
 	}
-	while (getline(in , line))
-	{
-		if (check_line(line) == 0)
-			exit(1); // exit failure
-
-		stringstream z(line);
-		int tmp;
-		z << tmp;
+	
+	int tmp;
+	while (in >> tmp)
 		ret.push_back(tmp);
-	}
 	return ret;
 }
 
@@ -76,12 +70,13 @@ void block_from_file(pid_t proc, char * filename)
 
 	for (auto i : syscalls) {
 		long rv = do_syscall(proc, i);
-
+		cout << "rc = " << rv << endl;
 		if (rv >= 0) {
 			printf("Process Blocked successfully");
 		}
 		else {
 			perror("err:");
+			exit(1);
 		}
 	}
 
@@ -124,8 +119,8 @@ int main(int argc  , char *argv[]) {
 
 	block_from_file(getpid(), argv[2]);
 
-	auto ret= execvp(argv[3], argv +3);
-	if(ret < 0 )
+	auto ret = execvp(argv[3], argv + 3);
+	if (ret < 0 )
 	{
 		perror("err:");
 	}
