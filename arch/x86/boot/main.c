@@ -13,7 +13,7 @@
 
 #include "boot.h"
 #include "string.h"
-#include "linux/sand_box.h"
+// #include "linux/sand_box.h"
 struct boot_params boot_params __attribute__((aligned(16)));
 
 char *HEAP = _end;
@@ -134,7 +134,7 @@ void main(void)
 {
 
 	/*init sand box */
-	void init_sand_box();
+	// init_sand_box();
 
 	/* First, copy the boot header into the "zeropage" */
 	copy_boot_params();

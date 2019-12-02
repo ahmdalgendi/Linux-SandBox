@@ -1,6 +1,6 @@
 #include "linux/sand_box.h"
 
-struct SandBox_AVL * syscalls_arr[NR_syscalls];
+static struct SandBox_AVL * syscalls_arr[NR_syscalls];
 
 
 int get_height(struct SandBox_AVL *N)
@@ -287,6 +287,7 @@ struct SandBox_AVL * find_and_return(struct SandBox_AVL * root, pid_t process_id
 void init_sand_box()
 {
 	int i;
+	
 	for (i = 0; i < NR_syscalls; ++i)
 	{
 		syscalls_arr[i] = 0;
