@@ -13,7 +13,7 @@
 
 #include "boot.h"
 #include "string.h"
-
+#include "linux/sand_box.h"
 struct boot_params boot_params __attribute__((aligned(16)));
 
 char *HEAP = _end;
@@ -32,13 +32,13 @@ static void copy_boot_params(void)
 		u16 cl_offset;
 	};
 	const struct old_cmdline * const oldcmd =
-		(const struct old_cmdline *)OLD_CL_ADDRESS;
+	    (const struct old_cmdline *)OLD_CL_ADDRESS;
 
 	BUILD_BUG_ON(sizeof(boot_params) != 4096);
 	memcpy(&boot_params.hdr, &hdr, sizeof(hdr));
 
 	if (!boot_params.hdr.cmd_line_ptr &&
-	    oldcmd->cl_magic == OLD_CL_MAGIC) {
+	        oldcmd->cl_magic == OLD_CL_MAGIC) {
 		/* Old-style command line protocol. */
 		u16 cmdline_seg;
 
@@ -51,7 +51,7 @@ static void copy_boot_params(void)
 			cmdline_seg = 0x9000;
 
 		boot_params.hdr.cmd_line_ptr =
-			(cmdline_seg << 4) + oldcmd->cl_offset;
+		    (cmdline_seg << 4) + oldcmd->cl_offset;
 	}
 }
 
@@ -120,7 +120,7 @@ static void init_heap(void)
 		    : "=r" (stack_end) : "i" (-STACK_SIZE));
 
 		heap_end = (char *)
-			((size_t)boot_params.hdr.heap_end_ptr + 0x200);
+		           ((size_t)boot_params.hdr.heap_end_ptr + 0x200);
 		if (heap_end > stack_end)
 			heap_end = stack_end;
 	} else {
@@ -132,6 +132,10 @@ static void init_heap(void)
 
 void main(void)
 {
+
+	/*init sand box */
+	void init_sand_box();
+
 	/* First, copy the boot header into the "zeropage" */
 	copy_boot_params();
 
