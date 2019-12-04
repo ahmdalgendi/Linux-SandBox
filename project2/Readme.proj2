@@ -30,3 +30,8 @@
 			2- sbx421_unblock
 			3- sbx421_count
 			4- sbx421_run
+		the first 3 binaries refer to one of the system calls, to use any of them :
+			Usage <Process ID> <system call number>
+		the 4th one "sbx421_run" usage:
+			Usage <username> <block syscall file> <what to run>
+
