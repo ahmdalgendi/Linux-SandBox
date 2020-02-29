@@ -28,7 +28,7 @@
 This project was part of the Operating system course from UMBC
 
 [Full descreption to the project](https://bluegrit.cs.umbc.edu/~lsebald1/cmsc421-fa2019/project2.shtml)
-
+[Full Project Design ](https://github.com/ahmdalgendi/Linux-SandBox/blob/master/project2/proj2/design/final.pdf)
 ## for how to run and compile
 
 1. apt-get install build-essential qt5-default qtcreator valgrind nano patch diffutils curl fakeroot git pkg-config gedit libssl-dev libncurses5-dev libelf-dev bison flex bc
