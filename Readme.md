@@ -1,5 +1,5 @@
 # New version of linux kernel with Sand-box
-## in this project I implemented A sand-box in side the linux kernel code
+## in this project I implemented A sand-box inside the linux kernel code
 
 ---------------
 ## New added system calls
