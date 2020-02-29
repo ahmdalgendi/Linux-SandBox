@@ -28,6 +28,7 @@
 This project was part of the Operating system course from UMBC
 
 [Full descreption to the project](https://bluegrit.cs.umbc.edu/~lsebald1/cmsc421-fa2019/project2.shtml)
+
 [Full Project Design ](https://github.com/ahmdalgendi/Linux-SandBox/blob/master/project2/proj2/design/final.pdf)
 ## for how to run and compile
 
