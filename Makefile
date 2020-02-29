@@ -2,7 +2,7 @@
 VERSION = 5
 PATCHLEVEL = 2
 SUBLEVEL = 11
-EXTRAVERSION = auae
+EXTRAVERSION = ahmdalgendi
 NAME = Bobtail Squid
 
 # *DOCUMENTATION*
